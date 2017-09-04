@@ -18,8 +18,10 @@ namespace CustomerConsoleApp
                 Console.Clear();
                 Console.WriteLine("-- Customer Database Console App --");
                 Console.WriteLine("1. Add a new customer");
-                Console.WriteLine("2. List all customers");
-                Console.WriteLine("3. Exit");
+                Console.WriteLine("2. Delete a customer");
+                Console.WriteLine("3. Update a customer");
+                Console.WriteLine("4. List all customers");
+                Console.WriteLine("5. Exit");
                 int choice = AskForInt(": ");
                 switch (choice)
                 {
@@ -28,10 +30,17 @@ namespace CustomerConsoleApp
                         Console.ReadKey();
                         break;
                     case 2:
-                        DbHandler.QueryDb("select * from Customers");
-                        Console.ReadKey();
+                        DeleteCustomer();
                         break;
                     case 3:
+                        Console.WriteLine("Update a customer");
+                        Console.ReadKey();
+                        break;
+                    case 4:
+                        DbHandler.QueryDb("select id, first_name, last_name, email_address, phonenumber from Customers");
+                        Console.ReadKey();
+                        break;
+                    case 5:
                         Environment.Exit(0);
                         break;
                     default:
@@ -48,6 +57,21 @@ namespace CustomerConsoleApp
             string email = AskGreen("Email: ");
             string phoneNumber = AskGreen("Phonenumber: ");
             Customer customer = new Customer(firstName, lastName, email, phoneNumber);
+            DbHandler.AddCustomerToDb(customer);
+            Console.WriteLine($"{firstName} {lastName} was successfully added to the database");
+        }
+        private static void DeleteCustomer()
+        {
+            int customerId = AskForInt("Customer id: ");
+            if (DbHandler.DeleteCustomerFromDb(customerId) == 1)
+            {
+                Console.WriteLine($"{customerId} deleted from database");
+            }
+            else
+            {
+                Console.WriteLine($"No customer with id {customerId} exists in the database");
+            }
+            Console.ReadKey();
         }
 
         /// <summary>
@@ -64,11 +88,14 @@ namespace CustomerConsoleApp
                 Console.Write(question);
                 try
                 {
+                    Console.ForegroundColor = ConsoleColor.Green;
                     answer = int.Parse(Console.ReadLine());
+                    Console.ResetColor();
                     isInt = true;
                 }
                 catch (FormatException)
                 {
+                    Console.ResetColor();
                     Console.WriteLine("Enter a number, try again");
                     Console.ReadKey();
                 }
