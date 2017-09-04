@@ -41,6 +41,20 @@ namespace CustomerConsoleApp
                 }
             }
         }
+        public static void UpdateCustomerInDb(Customer customer, int customerId)
+        {
+            var sql = $"update Customers set first_name='{customer.FirstName}', last_name='{customer.LastName}'," +
+                $" email_address='{customer.EmailAddress}', phonenumber='{customer.PhoneNumber}'" +
+                $"where id={customerId}";
+            using (var con = new SqlConnection(connstr))
+            {
+                using (var com = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    com.ExecuteNonQuery();
+                }
+            }
+        }
         public static int DeleteCustomerFromDb(int customerId)
         {
             var sql = $"delete from Customers where id={customerId}";
@@ -50,6 +64,47 @@ namespace CustomerConsoleApp
                 {
                     con.Open();
                     return com.ExecuteNonQuery();
+                }
+            }
+        }
+        public static bool IsCustomerInDb(int customerId)
+        {
+            var sql = $"select id from Customers where id={customerId}";
+            using (var con = new SqlConnection(connstr))
+            {
+                using (var com = new SqlCommand(sql, con))
+                {
+                    
+                    con.Open();
+                    var reader = com.ExecuteReader();
+                    reader.Read();
+                    if (reader.IsDBNull(0))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        public static Customer GetCustomerFromDb(int customerId)
+        {
+            var sql = $"select * from Customers where id={customerId}";
+            using (var con = new SqlConnection(connstr))
+            {
+                using (var com = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    var reader = com.ExecuteReader();
+                    
+                    reader.Read();
+                    string firstName = reader.GetValue(1).ToString();
+                    string lastName = reader.GetValue(2).ToString();
+                    string emailAddress = reader.GetValue(3).ToString();
+                    string phoneNumber = reader.GetValue(4).ToString();
+                    return new Customer(firstName, lastName, emailAddress, phoneNumber);
                 }
             }
         }

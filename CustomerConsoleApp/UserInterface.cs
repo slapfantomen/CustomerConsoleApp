@@ -33,8 +33,7 @@ namespace CustomerConsoleApp
                         DeleteCustomer();
                         break;
                     case 3:
-                        Console.WriteLine("Update a customer");
-                        Console.ReadKey();
+                        UpdateCustomer();
                         break;
                     case 4:
                         DbHandler.QueryDb("select id, first_name, last_name, email_address, phonenumber from Customers");
@@ -48,6 +47,49 @@ namespace CustomerConsoleApp
                 }
             }
 
+        }
+
+        private static void UpdateCustomer()
+        {
+
+            int customerId = AskForInt("Customer id: ");
+            if (DbHandler.IsCustomerInDb(customerId))
+            {
+                var customer = DbHandler.GetCustomerFromDb(customerId);
+                Console.WriteLine("Enter data in fields to update, leave blank to ignore field");
+                PrintGrey($"First name: {customer.FirstName}");
+                string firstName = AskGreen(": ");
+                if (!string.IsNullOrEmpty(firstName))
+                {
+                    customer.FirstName = firstName;
+                }
+                PrintGrey($"Last name: {customer.LastName}");
+                string lastName = AskGreen(": ");
+                if (!string.IsNullOrEmpty(lastName))
+                {
+                    customer.LastName = lastName;
+                }
+                PrintGrey($"Email: {customer.EmailAddress}");
+                string email = AskGreen(": ");
+                if (!string.IsNullOrEmpty(email))
+                {
+                    customer.EmailAddress = email;
+                }
+                PrintGrey($"Phonenumber: {customer.PhoneNumber}");
+                string phoneNumber = AskGreen(": ");
+                if (!string.IsNullOrEmpty(phoneNumber))
+                {
+                    customer.PhoneNumber = phoneNumber;
+                }
+                DbHandler.UpdateCustomerInDb(customer, customerId);
+                Console.WriteLine("Update complete");
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.WriteLine($"No customer with id {customerId} exists in the database");
+            }
+            
         }
 
         private static void AddCustomer()
@@ -114,6 +156,13 @@ namespace CustomerConsoleApp
             string answer = Console.ReadLine();
             Console.ResetColor();
             return answer;
+        }
+
+        public static void PrintGrey(string str)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(str);
+            Console.ResetColor();
         }
     }
 }
