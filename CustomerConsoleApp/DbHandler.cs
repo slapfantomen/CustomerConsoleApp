@@ -15,9 +15,15 @@ namespace CustomerConsoleApp
                 {
                     con.Open();
                     var reader = com.ExecuteReader();
+                    
                     while (reader.Read())
                     {
-                        Console.WriteLine(reader[1]);
+                        int count = reader.FieldCount;
+                        for (int i = 1; i < count; i++)
+                        {
+                            Console.Write(reader.GetValue(i) + " ");
+                        }
+                        Console.WriteLine();
                     }
                 }
             }
