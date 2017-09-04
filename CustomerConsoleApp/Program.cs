@@ -10,6 +10,7 @@ namespace CustomerConsoleApp
     {
         static void Main(string[] args)
         {
+            DbHandler.QueryDb("select * from Customers");
         }
     }
 }
