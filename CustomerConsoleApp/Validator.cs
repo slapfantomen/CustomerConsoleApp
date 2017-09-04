@@ -7,12 +7,24 @@ using System.Threading.Tasks;
 
 namespace CustomerConsoleApp
 {
-    class Validator
+    public static class Validator
     {
-        public bool ValidateEmail(string email)
+        public static bool ValidateEmail(string email)
         {
-            Regex r = new Regex(@"^(([\w]+\.?){0,2}([\w]+))@(([\w]*\.?)?([\w]+))\.(\w{2})$");
-            Match m = r.Match(email);
+            return Validate(@"^(([\w]+\.?){0,2}([\w]+))@(([\w]*\.?)?([\w]+))\.(\w{2,3})$", email);
+        }
+        public static bool ValidateName(string name)
+        {
+            return Validate(@"^[A-ZÅÄÖ]{1}\w{1,10}-?([A-ZÅÄÖ]{1}\w{1,10})?$", name);            
+        }
+        public static bool ValidatePhoneNumber(string phoneNumber)
+        {
+            return Validate(@"^\d{10}$", phoneNumber);
+        }
+        private static bool Validate(string pattern, string str)
+        {
+            Regex r = new Regex(pattern);
+            Match m = r.Match(str);
             return m.Success;
         }
     }

@@ -36,8 +36,7 @@ namespace CustomerConsoleApp
                         UpdateCustomer();
                         break;
                     case 4:
-                        DbHandler.QueryDb("select id, first_name, last_name, email_address, phonenumber from Customers");
-                        Console.ReadKey();
+                        ListAllCustomers();
                         break;
                     case 5:
                         Environment.Exit(0);
@@ -49,6 +48,12 @@ namespace CustomerConsoleApp
 
         }
 
+        private static void ListAllCustomers()
+        {
+            DbHandler.QueryDb("select id, first_name, last_name, email_address, phonenumber from Customers");
+            Console.ReadKey();
+        }
+
         private static void UpdateCustomer()
         {
 
@@ -57,29 +62,42 @@ namespace CustomerConsoleApp
             {
                 var customer = DbHandler.GetCustomerFromDb(customerId);
                 Console.WriteLine("Enter data in fields to update, leave blank to ignore field");
+                Console.WriteLine("Invalid inputs will be ignored");
                 PrintGrey($"First name: {customer.FirstName}");
                 string firstName = AskGreen(": ");
                 if (!string.IsNullOrEmpty(firstName))
                 {
-                    customer.FirstName = firstName;
+                    if (Validator.ValidateName(firstName))
+                    {
+                        customer.FirstName = firstName;
+                    }   
                 }
                 PrintGrey($"Last name: {customer.LastName}");
                 string lastName = AskGreen(": ");
                 if (!string.IsNullOrEmpty(lastName))
                 {
-                    customer.LastName = lastName;
+                    if (Validator.ValidateName(lastName))
+                    {
+                        customer.LastName = lastName;
+                    }                  
                 }
                 PrintGrey($"Email: {customer.EmailAddress}");
                 string email = AskGreen(": ");
                 if (!string.IsNullOrEmpty(email))
                 {
-                    customer.EmailAddress = email;
+                    if (Validator.ValidateEmail(email))
+                    {
+                        customer.EmailAddress = email;
+                    }                   
                 }
                 PrintGrey($"Phonenumber: {customer.PhoneNumber}");
                 string phoneNumber = AskGreen(": ");
                 if (!string.IsNullOrEmpty(phoneNumber))
                 {
-                    customer.PhoneNumber = phoneNumber;
+                    if (Validator.ValidatePhoneNumber(phoneNumber))
+                    {
+                        customer.PhoneNumber = phoneNumber;
+                    }    
                 }
                 DbHandler.UpdateCustomerInDb(customer, customerId);
                 Console.WriteLine("Update complete");
@@ -94,10 +112,10 @@ namespace CustomerConsoleApp
 
         private static void AddCustomer()
         {
-            string firstName = AskGreen("First name: ");
-            string lastName = AskGreen("Last name: ");
-            string email = AskGreen("Email: ");
-            string phoneNumber = AskGreen("Phonenumber: ");
+            string firstName = EnterAndValidate(Validator.ValidateName, "First name: ");
+            string lastName = EnterAndValidate(Validator.ValidateName, "Last name: ");
+            string email = EnterAndValidate(Validator.ValidateEmail,"Email: ");
+            string phoneNumber = EnterAndValidate(Validator.ValidatePhoneNumber, "Enter phonenumber: ");
             Customer customer = new Customer(firstName, lastName, email, phoneNumber);
             DbHandler.AddCustomerToDb(customer);
             Console.WriteLine($"{firstName} {lastName} was successfully added to the database");
@@ -163,6 +181,27 @@ namespace CustomerConsoleApp
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine(str);
             Console.ResetColor();
+        }
+        static string EnterAndValidate(Func<string, bool> validator, string query)
+        {
+            string str;
+            do
+            {
+                str = AskGreen(query);
+
+            } while (!validator(str));
+
+            return str;
+        }
+
+        static void EditProperty(Customer customer, string s)
+        {
+            PrintGrey($"Email: {customer.EmailAddress}");
+            string email = AskGreen(": ");
+            if (!string.IsNullOrEmpty(email))
+            {
+                customer.EmailAddress = email;
+            }
         }
     }
 }

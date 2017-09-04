@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace CustomerConsoleApp
@@ -21,7 +22,7 @@ namespace CustomerConsoleApp
                         int count = reader.FieldCount;
                         for (int i = 0; i < count; i++)
                         {
-                            Console.Write(reader.GetValue(i) + " ");
+                            Console.Write(reader.GetValue(i)+ " ");
                         }
                         Console.WriteLine();
                     }
@@ -78,13 +79,13 @@ namespace CustomerConsoleApp
                     con.Open();
                     var reader = com.ExecuteReader();
                     reader.Read();
-                    if (reader.IsDBNull(0))
+                    if (reader.HasRows)
                     {
-                        return false;
+                        return true;
                     }
                     else
                     {
-                        return true;
+                        return false;
                     }
                 }
             }
