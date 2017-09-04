@@ -24,7 +24,7 @@ namespace CustomerConsoleApp
                 switch (choice)
                 {
                     case 1:
-                        Console.WriteLine("Feature coming soon");
+                        AddCustomer();
                         Console.ReadKey();
                         break;
                     case 2:
@@ -41,18 +41,27 @@ namespace CustomerConsoleApp
 
         }
 
+        private static void AddCustomer()
+        {
+            string firstName = AskGreen("First name: ");
+            string lastName = AskGreen("Last name: ");
+            string email = AskGreen("Email: ");
+            string phoneNumber = AskGreen("Phonenumber: ");
+            Customer customer = new Customer(firstName, lastName, email, phoneNumber);
+        }
+
         /// <summary>
         /// Print output to console. Read Integer from user.
         /// </summary>
-        /// <param name="output">Text to print </param>
+        /// <param name="question">Text to print </param>
         /// <returns>An interger from user</returns>
-        private static int AskForInt(string output)
+        private static int AskForInt(string question)
         {
             int answer = 0;
             bool isInt = false;
             do
             {
-                Console.Write(output);
+                Console.Write(question);
                 try
                 {
                     answer = int.Parse(Console.ReadLine());
@@ -64,6 +73,19 @@ namespace CustomerConsoleApp
                     Console.ReadKey();
                 }
             } while (!isInt);
+            return answer;
+        }
+        /// <summary>
+        /// Print question to user. Read input (in green).
+        /// </summary>
+        /// <param name="question">Text to print </param>
+        /// <returns>A string from user</returns>
+        public static string AskGreen(string question)
+        {
+            Console.Write(question);
+            Console.ForegroundColor = ConsoleColor.Green;
+            string answer = Console.ReadLine();
+            Console.ResetColor();
             return answer;
         }
     }
