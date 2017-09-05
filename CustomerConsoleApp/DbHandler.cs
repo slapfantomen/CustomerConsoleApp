@@ -16,6 +16,10 @@ namespace CustomerConsoleApp
                 {
                     con.Open();
                     var reader = com.ExecuteReader();
+                    if (!reader.HasRows)
+                    {
+                        Console.WriteLine("No results found in the database");
+                    }
                     
                     while (reader.Read())
                     {

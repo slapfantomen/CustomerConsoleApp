@@ -20,14 +20,14 @@ namespace CustomerConsoleApp
                 Console.WriteLine("1. Add a new customer");
                 Console.WriteLine("2. Delete a customer");
                 Console.WriteLine("3. Update a customer");
-                Console.WriteLine("4. List all customers");
-                Console.WriteLine("5. Exit");
+                Console.WriteLine("4. Search for a customer");
+                Console.WriteLine("5. List all customers");
+                Console.WriteLine("6. Exit");
                 int choice = AskForInt(": ");
                 switch (choice)
                 {
                     case 1:
                         AddCustomer();
-                        Console.ReadKey();
                         break;
                     case 2:
                         DeleteCustomer();
@@ -36,9 +36,12 @@ namespace CustomerConsoleApp
                         UpdateCustomer();
                         break;
                     case 4:
-                        ListAllCustomers();
+                        SearchForCustomer();
                         break;
                     case 5:
+                        ListAllCustomers();
+                        break;
+                    case 6:
                         Environment.Exit(0);
                         break;
                     default:
@@ -46,6 +49,43 @@ namespace CustomerConsoleApp
                 }
             }
 
+        }
+
+        private static void SearchForCustomer()
+        {
+            Console.Clear();
+            Console.WriteLine("-- Search --");
+            Console.WriteLine("1. First name");
+            Console.WriteLine("2. Last name");
+            Console.WriteLine("3. Email");
+            Console.WriteLine("4. Phonenumber");
+            Console.WriteLine("5. Back");
+            int choice = AskForInt(": ");
+            switch (choice)
+            {
+                case 1:
+                    SearchDb(Validator.ValidateName, "First name: ", "first_name");
+                    break;
+
+                case 2:
+                    SearchDb(Validator.ValidateName, "Last name: ", "last_name");
+                    break;
+                case 3:
+                    SearchDb(Validator.ValidateEmail, "Email: ", "email_address");
+                    break;
+                case 4:
+                    SearchDb(Validator.ValidatePhoneNumber, "Phone number: ", "phone_number");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void SearchDb(Func<string,bool> validator, string query, string searchItem)
+        {
+            string str = EnterAndValidate(validator, query);
+            DbHandler.QueryDb($"select * from Customers where {searchItem}='{str}'");
+            Console.ReadKey();
         }
 
         private static void ListAllCustomers()
@@ -119,6 +159,7 @@ namespace CustomerConsoleApp
             Customer customer = new Customer(firstName, lastName, email, phoneNumber);
             DbHandler.AddCustomerToDb(customer);
             Console.WriteLine($"{firstName} {lastName} was successfully added to the database");
+            Console.ReadKey();
         }
         private static void DeleteCustomer()
         {
