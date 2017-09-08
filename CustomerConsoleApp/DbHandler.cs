@@ -33,10 +33,10 @@ namespace CustomerConsoleApp
                 }
             }
         }
-        public static void AddCustomerToDb(Customer customer)
+        public static void AddCustomerToDb(Customer c)
         {
-            var sql = $"insert into Customers (first_name, last_name, email_address, phonenumber)" +
-                $"values('{customer.FirstName}', '{customer.LastName}', '{customer.EmailAddress}', '{customer.PhoneNumber}'); ";
+            var sql = $"execute CreateCustomer '{c.FirstName}', '{c.LastName}', '{c.EmailAddress}'," +
+                $"'{c.Address.Street}','{c.Address.Zipcode}','{c.Address.City}','{c.Address.Country}'";
             using (var con = new SqlConnection(connstr))
             {
                 using (var com = new SqlCommand(sql,con))
@@ -109,7 +109,8 @@ namespace CustomerConsoleApp
                     string lastName = reader.GetValue(2).ToString();
                     string emailAddress = reader.GetValue(3).ToString();
                     string phoneNumber = reader.GetValue(4).ToString();
-                    return new Customer(firstName, lastName, emailAddress, phoneNumber);
+                    //return new Customer(firstName, lastName, emailAddress, phoneNumber);
+                    return new Customer();
                 }
             }
         }

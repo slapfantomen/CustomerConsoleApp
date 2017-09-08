@@ -90,13 +90,46 @@ namespace CustomerConsoleApp
 
         private static void ListAllCustomers()
         {
-            DbHandler.QueryDb("select id, first_name, last_name, email_address, phonenumber from Customers");
+            DbHandler.QueryDb(sql: "execute GetAllUsers");
             Console.ReadKey();
         }
 
         private static void UpdateCustomer()
         {
+            Console.WriteLine("Select userId");
+            DbHandler.QueryDb(sql: "execute ListIdAndNames");
+            int cId = AskForInt(": ");
 
+            Console.WriteLine("-- Search --");
+            Console.WriteLine("1. Update name");
+            Console.WriteLine("2. Update email(s)");
+            Console.WriteLine("3. Add email(s)");
+            Console.WriteLine("4. Update phonenumber(s)");
+            Console.WriteLine("5. Add phonenumber(s)");
+            Console.WriteLine("6. Back");
+            int choice = AskForInt(": ");
+            switch (choice)
+            {
+                case 1:
+                    SearchDb(Validator.ValidateName, "First name: ", "first_name");
+                    break;
+
+                case 2:
+                    SearchDb(Validator.ValidateName, "Last name: ", "last_name");
+                    break;
+                case 3:
+                    SearchDb(Validator.ValidateEmail, "Email: ", "email_address");
+                    break;
+                case 4:
+                    SearchDb(Validator.ValidatePhoneNumber, "Phone number: ", "phone_number");
+                    break;
+                default:
+                    break;
+            }            
+        }
+
+        static void OLD_UpdateCustomer()
+        {
             int customerId = AskForInt("Customer id: ");
             if (DbHandler.IsCustomerInDb(customerId))
             {
@@ -110,7 +143,7 @@ namespace CustomerConsoleApp
                     if (Validator.ValidateName(firstName))
                     {
                         customer.FirstName = firstName;
-                    }   
+                    }
                 }
                 PrintGrey($"Last name: {customer.LastName}");
                 string lastName = AskGreen(": ");
@@ -119,7 +152,7 @@ namespace CustomerConsoleApp
                     if (Validator.ValidateName(lastName))
                     {
                         customer.LastName = lastName;
-                    }                  
+                    }
                 }
                 PrintGrey($"Email: {customer.EmailAddress}");
                 string email = AskGreen(": ");
@@ -128,7 +161,7 @@ namespace CustomerConsoleApp
                     if (Validator.ValidateEmail(email))
                     {
                         customer.EmailAddress = email;
-                    }                   
+                    }
                 }
                 PrintGrey($"Phonenumber: {customer.PhoneNumber}");
                 string phoneNumber = AskGreen(": ");
@@ -137,7 +170,7 @@ namespace CustomerConsoleApp
                     if (Validator.ValidatePhoneNumber(phoneNumber))
                     {
                         customer.PhoneNumber = phoneNumber;
-                    }    
+                    }
                 }
                 DbHandler.UpdateCustomerInDb(customer, customerId);
                 Console.WriteLine("Update complete");
@@ -146,8 +179,8 @@ namespace CustomerConsoleApp
             else
             {
                 Console.WriteLine($"No customer with id {customerId} exists in the database");
+                Console.ReadKey();
             }
-            
         }
 
         private static void AddCustomer()
@@ -156,7 +189,12 @@ namespace CustomerConsoleApp
             string lastName = EnterAndValidate(Validator.ValidateName, "Last name: ");
             string email = EnterAndValidate(Validator.ValidateEmail,"Email: ");
             string phoneNumber = EnterAndValidate(Validator.ValidatePhoneNumber, "Enter phonenumber: ");
-            Customer customer = new Customer(firstName, lastName, email, phoneNumber);
+            string street = AskGreen("Enter street: ");
+            string zipcode = AskGreen("Enter zipcode: ");
+            string city = AskGreen("Enter city: ");
+            string country = AskGreen("Enter country: ");
+            var address = new Address(street, zipcode, city, country);
+            Customer customer = new Customer(firstName, lastName, email, phoneNumber, address);
             DbHandler.AddCustomerToDb(customer);
             Console.WriteLine($"{firstName} {lastName} was successfully added to the database");
             Console.ReadKey();

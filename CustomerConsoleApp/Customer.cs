@@ -12,13 +12,20 @@ namespace CustomerConsoleApp
         public string LastName { get; set; }
         public string EmailAddress { get; set; }
         public string PhoneNumber { get; set; }
+        public Address Address;
 
-        public Customer(string firstName, string lastName, string emailAddress, string phoneNumber)
+        public Customer()
+        {
+            Address = new Address();
+        }
+
+        public Customer(string firstName, string lastName, string emailAddress, string phoneNumber, Address address)
         {
             FirstName = firstName;
             LastName = lastName;
             EmailAddress = emailAddress;
             PhoneNumber = phoneNumber;
+            Address = address;
         }
     }
 }
